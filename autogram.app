@@ -56,105 +56,78 @@ on uploadPhotoForAnalysis(photoFilePath)
 	return {photoCaption, photoScore, starRating}
 end uploadPhotoForAnalysis
 
-#set Safari to user Agent iPod Touch iOS 9.3, open and log in to Instagram, upload photo with caption
+#set Chrome to UserAgent iPhone 6, open and log in to Instagram, upload photo with caption, log out
 on uploadToInstagram(imageLocation, imageCaption)
-	tell application "Safari"
-		if not (exists window 1) then reopen
+	tell application "Google Chrome"
 		activate
-	end tell
-	delay 1
-	tell application "System Events"
-		tell process "Safari"
-			tell menu bar 1
-				click menu bar item "Safari"
-				tell menu "Safari"
-					click menu item "Private Browsing"
-				end tell
-			end tell
+		set the bounds of the first window to {0, 0, 650, 950}
+		tell front window
+			set URL of active tab to "https://www.instagram.com/accounts/login/"
 		end tell
-		tell process "Safari"
-			tell menu bar 1
-				tell menu bar item "Develop"
-					tell menu "Develop"
-						tell menu item "User Agent"
-							tell menu "User Agent"
-								#click menu item "Internet Explorer 11"
-								click menu item "Safari — iOS 9.3 — iPod touch"
-							end tell
-						end tell
-					end tell
-				end tell
-			end tell
-		end tell
-	end tell
-	tell application "Safari"
-		if not (exists window 1) then reopen
-		activate
-		set the URL of the front document to "https://www.instagram.com/accounts/login"
-		delay 3
-		do JavaScript "document.getElementsByName('username')[0].focus()" in document 1 #username
-		do JavaScript "document.getElementsByName('username')[0].select()" in document 1
-	end tell
-	
-	tell application "System Events"
-		keystroke "YOUR-INSTAGRAM-USER-NAME"
-		delay 1
-	end tell
-	
-	tell application "Safari"
-		do JavaScript "document.getElementsByName('password')[0].focus()" in document 1 #password
-		do JavaScript "document.getElementsByName('password')[0].select()" in document 1
-	end tell
-	
-	tell application "System Events"
-		keystroke "YOUR-INSTAGRAM-PASSWORD"
-		delay 1
-	end tell
-	
-	tell application "Safari"
-		do JavaScript "if(document.getElementsByTagName('button')[0].innerHTML == 'Log in'){document.getElementsByTagName('button')[0].click()} else if(document.getElementsByTagName('button')[1].innerHTML == 'Log in'){document.getElementsByTagName('button')[1].click()}" in document 1 # login
 		delay 10
-		do JavaScript "if(document.getElementsByTagName('button')[0].innerHTML == 'Not Now'){document.getElementsByTagName('button')[0].click()} else if(document.getElementsByTagName('button')[1].innerHTML == 'Not Now'){document.getElementsByTagName('button')[1].click()}" in document 1 # skip "save info"
-		delay 10
-		do JavaScript "document.getElementsByClassName('coreSpriteFeedCreation')[0].click()" in document 1 # add image (+)
+		do shell script "/usr/local/bin/cliclick c:607,80" # User Agent plugin
+		delay 1
+		do shell script "/usr/local/bin/cliclick c:571,153" # iOS
+		delay 1
+		do shell script "/usr/local/bin/cliclick c:406,112" # iPhone 6
 		delay 3
 	end tell
-	
 	tell application "System Events"
+		tell process "chrome"
+			do shell script "/usr/local/bin/cliclick c:330,582" # refocus pointer
+			do shell script "/usr/local/bin/cliclick c:330,582" # username
+			keystroke "YOUR-USERNAME-HERE"
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:330,625" # password
+			keystroke "YOUR-PASSWORD-HERE"
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:330,670" # Log In
+			delay 10
+			do shell script "/usr/local/bin/cliclick c:330,634" # Not Now
+			delay 10
+			do shell script "/usr/local/bin/cliclick c:330,950" # add image (+)
+			delay 2
+		end tell
 		keystroke "G" using {command down, shift down}
 		delay 1
 		keystroke imageLocation
-		delay 3
-		keystroke return
 		delay 2
+		keystroke return
+		delay 1
 		keystroke return
 		delay 2
 	end tell
-	
-	tell application "Safari"
-		do JavaScript "document.getElementsByClassName('createSpriteExpand')[0].click()" in document 1 # toggle crop (↙↗)
+	tell application "Google Chrome"
+		set the bounds of the first window to {0, 0, 650, 950} # reposition because the file finder shifts it to the right
 		delay 1
-		do JavaScript "document.getElementsByTagName('button')[1].click()" in document 1 # Next
-		delay 1
-		do JavaScript "document.getElementsByTagName('textarea')[0].focus()" in document 1 # Write a caption...
-		do JavaScript "document.getElementsByTagName('textarea')[0].select()" in document 1
 	end tell
-	
 	tell application "System Events"
-		keystroke imageCaption
-		delay 1
-	end tell
-	
-	tell application "Safari"
-		do JavaScript "document.getElementsByTagName('button')[1].click()" in document 1 # Share
-		delay 10
-		do JavaScript "document.getElementsByClassName('coreSpriteMobileNavProfileInactive')[0].click()" in document 1 # profile (👤)
-		delay 1
-		do JavaScript "document.getElementsByTagName('button')[2].click()" in document 1 # settings (⚙)
-		delay 1
-		do JavaScript "document.getElementsByClassName('coreSpriteNotificationRightChevron')[8].click()" in document 1 # Log Out
-		delay 1
-		quit
+		tell process "chrome"
+			do shell script "/usr/local/bin/cliclick c:28,756" # toggle crop (↙↗)
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:620,120" # Next
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:100,170" # Write a caption...
+			delay 2
+			keystroke imageCaption # paste in text
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:620,120" # Share
+			delay 10
+			do shell script "/usr/local/bin/cliclick c:585,950" # profile (👤)
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:30,120" # settings (⚙)
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:30,758" # Log Out
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:325,570" # Log Out (confirm)
+			delay 2
+			do shell script "/usr/local/bin/cliclick c:607,80" # User Agent plugin
+			delay 1
+			do shell script "/usr/local/bin/cliclick c:394,107" # Chrome
+			delay 1
+			do shell script "/usr/local/bin/cliclick c:394,107" # Default
+			delay 1
+		end tell
 	end tell
 end uploadToInstagram
 
