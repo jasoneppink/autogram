@@ -1,3 +1,6 @@
+global numPhotos
+set numPhotos to 0
+
 #open eyeem website, upload photo, get rating and caption, store these in iPhoto database, and return them
 on uploadPhotoForAnalysis(photoFilePath)
 	tell application "Google Chrome"
@@ -6,6 +9,13 @@ on uploadPhotoForAnalysis(photoFilePath)
 		tell front window
 			set URL of active tab to "https://www.eyeem.com/eyeem-vision"
 		end tell
+		if (numPhotos = 0) then
+			delay 3
+			do shell script "/usr/local/bin/cliclick c:253,607" # ADVANCED
+			delay 1
+			do shell script "/usr/local/bin/cliclick c:333,765" # Proceed to www.eyeem.com (unsafe)
+			set numPhotos to (numPhotos + 1)
+		end if
 		delay 15
 	end tell
 	tell application "System Events"
@@ -35,7 +45,7 @@ on uploadPhotoForAnalysis(photoFilePath)
 	tell application "Google Chrome"
 		set photoScore to execute front window's tab 1 javascript "document.getElementsByName('showcase')[0].contentWindow.document.getElementsByClassName('tech-aesthetics__text-score')[0].innerText"
 		set photoScore to text 1 thru -2 of photoScore
-		set photoScoreTag to "#aestheticscore" & photoScore & "percent"
+		set photoScoreTag to " | aesthetic score: " & photoScore & "% | "
 		#display dialog (photoScoreTag)
 		set photoScore to photoScore as number
 		#display dialog (photoScore)
@@ -81,12 +91,14 @@ on uploadToInstagram(imageLocation, imageCaption)
 		tell process "chrome"
 			do shell script "/usr/local/bin/cliclick c:330,582" # refocus pointer
 			do shell script "/usr/local/bin/cliclick c:330,582" # username
-			keystroke "YOUR-USERNAME-HERE"
+			keystroke "jasoneppink"
 			delay 2
 			do shell script "/usr/local/bin/cliclick c:330,625" # password
-			keystroke "YOUR-PASSWORD-HERE"
+			keystroke instagramPassword
 			delay 2
-			do shell script "/usr/local/bin/cliclick c:330,670" # Log In
+			do shell script "/usr/local/bin/cliclick c:330,670" # Log In (location 1)
+			delay 1
+			do shell script "/usr/local/bin/cliclick c:330,717" # Log In (location 2)
 			delay 10
 			do shell script "/usr/local/bin/cliclick c:330,634" # Not Now
 			delay 10
@@ -164,17 +176,18 @@ on uploadToInstagram(imageLocation, imageCaption)
 			delay 2
 			do shell script "/usr/local/bin/cliclick c:608,120" # Next
 			delay 2
-			do shell script "/usr/local/bin/cliclick c:147,147" # Write a caption...
+			#do shell script "/usr/local/bin/cliclick c:147,147" # Write a caption...
+			do shell script "/usr/local/bin/cliclick c:147,165" # Write a caption...
 			delay 2
 			keystroke imageCaption # paste in text
 			delay 10
 			do shell script "/usr/local/bin/cliclick c:600,120" # Share
 			delay 10
-			do shell script "/usr/local/bin/cliclick c:573,950" # profile (👤)
+			do shell script "/usr/local/bin/cliclick c:585,953" # profile (👤)
 			delay 2
 			do shell script "/usr/local/bin/cliclick c:30,120" # settings (⚙)
 			delay 2
-			do shell script "/usr/local/bin/cliclick c:30,800" # Log Out
+			do shell script "/usr/local/bin/cliclick c:70,845" # Log Out
 			delay 2
 			do shell script "/usr/local/bin/cliclick c:325,570" # Log Out (confirm)
 			delay 2
@@ -228,3 +241,7 @@ on replace_chars(this_text, search_string, replacement_string)
 	set AppleScript's text item delimiters to ""
 	return this_text
 end replace_chars
+
+on setPassword()
+	return "YOUR-PASSWORD-HERE"
+end setPassword
