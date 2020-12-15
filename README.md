@@ -1,3 +1,5 @@
+Note: The machine vision service this project relied on has changed, breaking this script.
+
 # Autogram
 [Autogram](https://jasoneppink.com/autogram) is an AppleScript application that automates the selection, captioning, and posting of photos to Instagram. It relies on an imperfect machine vision service trained on a proprietary (and unknown) corpus of photos that results in [inexplicable curatorial decisions and, often, unintentional hilarity](https://www.instagram.com/jasoneppink/).
 
